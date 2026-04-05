@@ -1,0 +1,35 @@
+---
+const { eyebrow, title, text, actions = [], stats = [] } = Astro.props;
+---
+
+<section class="hero panel">
+  <div class="hero-grid">
+    <div>
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{title}</h1>
+      {text && <p class="hero-copy">{text}</p>}
+      {actions.length > 0 && (
+        <div class="hero-actions">
+          {actions.map((action) => (
+            <a class={action.variant === 'ghost' ? 'button ghost' : 'button'} href={action.href} target={action.external ? '_blank' : undefined} rel={action.external ? 'noreferrer' : undefined}>
+              {action.label}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {stats.length > 0 && (
+      <aside class="home-hero-side">
+        <div class="charging-summary-grid">
+          {stats.map((stat) => (
+            <div class="km-card">
+              <strong>{stat.value}</strong>
+              <p>{stat.label}</p>
+            </div>
+          ))}
+        </div>
+      </aside>
+    )}
+  </div>
+</section>

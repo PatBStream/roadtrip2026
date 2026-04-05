@@ -1,0 +1,285 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { days } from '../../data/trip.js';
+
+export function getStaticPaths() {
+  return days.map((day) => ({ params: { slug: day.slug }, props: { day } }));
+}
+
+const { day } = Astro.props;
+const dayIndex = days.findIndex((entry) => entry.slug === day.slug);
+const previousDay = dayIndex > 0 ? days[dayIndex - 1] : null;
+const nextDay = dayIndex < days.length - 1 ? days[dayIndex + 1] : null;
+
+const stopById = new Map(day.stops.map((stop) => [stop.id, stop]));
+const chargeById = new Map(
+  day.chargingPlan.map((charge) => [
+    charge.id,
+    {
+      name: charge.stop,
+      location: charge.purpose,
+      timing: charge.duration,
+      practical: `${charge.legMiles} · arrive ${charge.arrivalSoc} · charge to ${charge.chargeTo}`,
+      blurb: charge.notes,
+      category: 'Charging stop',
+    },
+  ])
+);
+
+const orderedStops = (day.orderedPlan ?? [])
+  .map((item, index) => {
+    const entry = item.type === 'charging' ? chargeById.get(item.ref) : stopById.get(item.ref);
+
+    if (!entry) {
+      console.warn(`[days/${day.slug}] Missing orderedPlan reference: ${item.ref}`);
+      return null;
+    }
+
+    return {
+      ...entry,
+      stopNumber: index + 1,
+      stopType: item.type,
+      stopTypeLabel: item.type === 'charging' ? 'Charging' : 'Destination',
+    };
+  })
+  .filter(Boolean);
+---
+
+<BaseLayout title={`${day.title} · Road Trip 2026`} description={`Detailed route guide for ${day.title}.`} currentPath="/days/">
+  <section class="detail-header panel">
+    <div class="detail-copy">
+      <div>
+        <p class="eyebrow">Day {day.dayNumber} · {day.date}</p>
+        <h1>{day.title}</h1>
+        <p>{day.route}</p>
+      </div>
+      <div class="route-strip">
+        <span class="route-pill">{day.driveHours}</span>
+        <span class="route-pill">{day.start} → {day.end}</span>
+        <span class="route-pill">{day.stops.length} featured stops</span>
+        <span class="route-pill">{day.chargingPlan.length} charging stops</span>
+      </div>
+      <div class="inline-actions">
+        <a class="button" href={day.mapLink} target="_blank" rel="noreferrer">Open Google Maps route</a>
+        <a class="button ghost" href="/charging/">See charging page</a>
+        <a class="button ghost" href="/map/">Open route map links</a>
+      </div>
+    </div>
+
+    <div class="detail-image-wrap">
+      <span class="micro-pill">Featured stop image</span>
+      <img class="detail-image" src={day.image} alt={day.imageAlt ?? `Featured image for ${day.title}`} />
+    </div>
+  </section>
+
+  <section class="stat-strip">
+    <div class="stat-card">
+      <strong>Start</strong>
+      <p>{day.start}</p>
+    </div>
+    <div class="stat-card">
+      <strong>Finish</strong>
+      <p>{day.end}</p>
+    </div>
+    <div class="stat-card">
+      <strong>Driving time</strong>
+      <p>{day.driveHours}</p>
+    </div>
+    <div class="stat-card">
+      <strong>Hotel pick</strong>
+      <p>{day.lodging?.primary}</p>
+    </div>
+  </section>
+
+  {(day.openingNote || day.arrivalNote) && (
+    <section class="panel callout">
+      <strong>{day.openingNote ? 'Opening note' : 'Arrival note'}</strong>
+      <p>{day.openingNote ?? day.arrivalNote}</p>
+    </section>
+  )}
+
+  <section class="panel">
+    <p class="eyebrow">Stop order</p>
+    <h2>Destination and charging stops in exact route order.</h2>
+    <div class="ordered-stop-list">
+      {orderedStops.map((stop) => (
+        <article class={`ordered-stop-card ${stop.stopType}`}>
+          <div class="ordered-stop-index">
+            <span>Stop {stop.stopNumber}</span>
+            <small>{stop.stopTypeLabel}</small>
+          </div>
+          <div class="ordered-stop-body">
+            <div class="ordered-stop-heading">
+              <span class="stop-label">{stop.category}</span>
+              <span class="place">{stop.location}</span>
+            </div>
+            {stop.url ? (
+              <h3>
+                <a class="stop-title-link" href={stop.url} target="_blank" rel="noreferrer">
+                  {stop.name}
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </h3>
+            ) : (
+              <h3>{stop.name}</h3>
+            )}
+            <p>{stop.blurb}</p>
+            <p class="small-note">{stop.practical}</p>
+            <div class="ordered-stop-meta">
+              <div>
+                <span>Suggested time</span>
+                <strong>{stop.timing}</strong>
+              </div>
+              <div>
+                <span>Stop type</span>
+                <strong>{stop.stopTypeLabel}</strong>
+              </div>
+            </div>
+            {stop.url && (
+              <div class="card-actions">
+                <a class="stop-inline-link" href={stop.url} target="_blank" rel="noreferrer">{stop.linkLabel ?? 'Stop website'}</a>
+              </div>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="detail-grid">
+    <article class="panel">
+      <p class="eyebrow">Stops to hit</p>
+      <h2>The day plan</h2>
+      <div class="stop-grid">
+        {day.stops.map((stop) => (
+          <article class="stop-card">
+            <span class="stop-label">{stop.category}</span>
+            <span class="place">{stop.location}</span>
+            {stop.url ? (
+              <h3>
+                <a class="stop-title-link" href={stop.url} target="_blank" rel="noreferrer">
+                  {stop.name}
+                  <span aria-hidden="true">↗</span>
+                </a>
+              </h3>
+            ) : (
+              <h3>{stop.name}</h3>
+            )}
+            <p>{stop.blurb}</p>
+            <p class="small-note">{stop.practical}</p>
+            <div class="stop-meta">
+              <div>
+                <span>Suggested time</span>
+                <strong>{stop.timing}</strong>
+              </div>
+              <div>
+                <span>Role in route</span>
+                <strong>{stop.category}</strong>
+              </div>
+            </div>
+            {stop.url && (
+              <div class="card-actions">
+                <a class="stop-inline-link" href={stop.url} target="_blank" rel="noreferrer">{stop.linkLabel ?? 'Stop website'}</a>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </article>
+
+    <aside class="panel">
+      <p class="eyebrow">Vibe + lodging</p>
+      <h2>How the day is meant to unfold.</h2>
+      <div class="timeline">
+        <div class="timeline-card">
+          <span class="kicker">Route highlights</span>
+          <h3>Best reasons to take this stretch seriously</h3>
+          <ul class="meta-list compact">
+            {day.highlights?.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+        <div class="timeline-card">
+          <span class="kicker">Vibe</span>
+          <h3>Expected energy</h3>
+          <p>{day.vibe}</p>
+        </div>
+        <div class="timeline-card">
+          <span class="kicker">Sleep plan</span>
+          <h3>Lodging</h3>
+          <p>First choice: {day.lodging?.primary}</p>
+          <p>Backup: {day.lodging?.backup}</p>
+        </div>
+        <div class="timeline-card">
+          <span class="kicker">Road-trip behavior</span>
+          <h3>What the car is probably doing</h3>
+          <ul class="meta-list compact">
+            {day.behaviors.map((behavior) => <li>{behavior}</li>)}
+          </ul>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="panel">
+    <p class="eyebrow">Charging plan</p>
+    <h2>Candidate charging flow for this day.</h2>
+    <div class="charge-grid">
+      {day.chargingPlan.map((charge) => (
+        <article class="charge-card">
+          <span class="place">{charge.purpose}</span>
+          <h3>{charge.stop}</h3>
+          <p>{charge.notes}</p>
+          <div class="charge-rail">
+            <div>
+              <span>Leg distance</span>
+              <strong>{charge.legMiles}</strong>
+            </div>
+            <div>
+              <span>Arrival SOC</span>
+              <strong>{charge.arrivalSoc}</strong>
+            </div>
+            <div>
+              <span>Target charge</span>
+              <strong>{charge.chargeTo}</strong>
+            </div>
+            <div>
+              <span>Stop length</span>
+              <strong>{charge.duration}</strong>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="day-pagination panel">
+    <div>
+      <p class="eyebrow">Keep moving</p>
+      <h2>Continue through the route without losing your place.</h2>
+      <p class="small-note">Move to the next drive day in sequence, jump back to the full day-by-day index, or use the map page when you want the broader route view.</p>
+    </div>
+    <div class="day-pagination-actions">
+      {previousDay && (
+        <a class="day-pagination-link ghost" href={`/days/${previousDay.slug}/`}>
+          <span class="pagination-label">Previous day</span>
+          <strong>Day {previousDay.dayNumber} · {previousDay.title}</strong>
+        </a>
+      )}
+      {nextDay ? (
+        <a class="day-pagination-link" href={`/days/${nextDay.slug}/`}>
+          <span class="pagination-label">Next day</span>
+          <strong>Day {nextDay.dayNumber} · {nextDay.title}</strong>
+        </a>
+      ) : (
+        <a class="day-pagination-link" href="/map/">
+          <span class="pagination-label">Trip finale</span>
+          <strong>Open the route map and finish in Chicago</strong>
+        </a>
+      )}
+      <a class="day-pagination-link ghost" href="/days/">
+        <span class="pagination-label">All days</span>
+        <strong>Back to the full day-by-day index</strong>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

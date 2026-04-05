@@ -1,0 +1,28 @@
+---
+const { day } = Astro.props;
+---
+
+<article class="day-card panel">
+  <div class="day-card-media">
+    <img src={day.image} alt={day.imageAlt ?? `Featured image for ${day.title}`} loading="lazy" />
+    <div class="day-card-badges">
+      <span class="micro-pill">Day {day.dayNumber}</span>
+      <span class="micro-pill">{day.driveHours}</span>
+    </div>
+  </div>
+
+  <div class="day-card-copy">
+    <p class="eyebrow">{day.date}</p>
+    <h2>{day.title}</h2>
+    <p>{day.route}</p>
+    <ul class="meta-list compact">
+      <li>{day.start} → {day.end}</li>
+      <li>{day.stops.length} featured stops</li>
+      <li>{day.chargingPlan.length} charging stops</li>
+    </ul>
+    <div class="card-actions">
+      <a class="button" href={`/days/${day.slug}/`}>Open day guide</a>
+      <a class="button ghost" href={day.mapLink} target="_blank" rel="noreferrer">Open in Google Maps</a>
+    </div>
+  </div>
+</article>

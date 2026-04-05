@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { chargingAssumptions, days } from '../data/trip.js';
+---
+
+<BaseLayout title="Charging Plan · Road Trip 2026" description="EV charging strategy for the Palm Springs to Chicago road trip." currentPath="/charging/">
+  <PageHero
+    eyebrow="Charging plan"
+    title="An EV charging strategy that supports the trip instead of hijacking it."
+    text="These charging stops assume a fully loaded 2025 Tesla Model Y with three travelers. The goal is straightforward: charge where it naturally overlaps with food, rest, or a useful pause, and keep the drive feeling smooth."
+    actions={[
+      { label: 'Browse day guides', href: '/days/' },
+      { label: 'Open map links', href: '/map/', variant: 'ghost' },
+    ]}
+    stats={[
+      { value: '100%', label: 'Day 1 departure' },
+      { value: '80–85%', label: 'Days 2–5 start target' },
+      { value: '5–15%', label: 'Weather / speed swing' },
+      { value: 'Meals + breaks', label: 'Charging paired with real stops' },
+    ]}
+  />
+
+  <section class="feature-split charging-feature-split">
+    <article class="panel">
+      <p class="eyebrow">Planning assumptions</p>
+      <h2>What the charging strategy is based on.</h2>
+      <ul class="expectations">
+        {chargingAssumptions.map((item) => <li>{item}</li>)}
+      </ul>
+    </article>
+
+    <aside class="panel map-board charging-map-board">
+      <p class="eyebrow">Charging rhythm</p>
+      <h2>Most days follow one main charge plus a lighter buffer or arrival top-up.</h2>
+      <div class="route-map-shell" aria-label="Charging rhythm across overnight stops">
+        <svg class="route-map-svg" viewBox="0 0 1000 520" aria-hidden="true" preserveAspectRatio="none">
+          <path class="route-map-road route-map-road-back" d="M 90 410 C 190 360, 290 315, 380 280 S 540 245, 655 235 S 805 190, 915 125" />
+          <path class="route-map-road route-map-road-main" d="M 90 410 C 190 360, 290 315, 380 280 S 540 245, 655 235 S 805 190, 915 125" />
+          <path class="route-map-highway" d="M 88 420 C 186 370, 286 325, 376 290 S 538 255, 655 245 S 804 200, 913 135" />
+        </svg>
+        <div class="route-map-points">
+          <div class="route-map-point" style="left:10%; top:72%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Palm Springs</strong><span>100% start</span></span></div>
+          <div class="route-map-point" style="left:31%; top:55%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Flagstaff</strong><span>Day 1 reset</span></span></div>
+          <div class="route-map-point" style="left:47%; top:48%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Tucumcari</strong><span>Day 2 reset</span></span></div>
+          <div class="route-map-point" style="left:65%; top:42%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Oklahoma City</strong><span>Day 3 reset</span></span></div>
+          <div class="route-map-point" style="left:80%; top:33%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>St. Louis</strong><span>Day 4 reset</span></span></div>
+          <div class="route-map-point" style="left:92%; top:22%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Chicago</strong><span>Finish with buffer</span></span></div>
+        </div>
+      </div>
+      <div class="route-legend">
+        <strong>How to use this page</strong>
+        <p>Read this once for the overall EV strategy, then use the day pages when you want the charging stops in exact route order.</p>
+      </div>
+    </aside>
+  </section>
+
+  {days.map((day) => (
+    <section class="charging-day panel">
+      <div>
+        <p class="eyebrow">Day {day.dayNumber} · {day.date}</p>
+        <h2>{day.title}</h2>
+        <p>{day.route}</p>
+        <div class="inline-actions">
+          <a class="button ghost" href={`/days/${day.slug}/`}>Open day guide</a>
+          <a class="button ghost" href={day.mapLink} target="_blank" rel="noreferrer">Open route in Google Maps</a>
+        </div>
+      </div>
+      <div class="charge-grid">
+        {day.chargingPlan.map((charge) => (
+          <article class="charge-card">
+            <span class="place">{charge.purpose}</span>
+            <h3>{charge.stop}</h3>
+            <p>{charge.notes}</p>
+            <div class="charge-rail">
+              <div>
+                <span>Leg distance</span>
+                <strong>{charge.legMiles}</strong>
+              </div>
+              <div>
+                <span>Arrival SOC</span>
+                <strong>{charge.arrivalSoc}</strong>
+              </div>
+              <div>
+                <span>Target charge</span>
+                <strong>{charge.chargeTo}</strong>
+              </div>
+              <div>
+                <span>Expected stop</span>
+                <strong>{charge.duration}</strong>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  ))}
+</BaseLayout>

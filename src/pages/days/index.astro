@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DayCard from '../../components/DayCard.astro';
+import { days } from '../../data/trip.js';
+---
+
+<BaseLayout title="Daily Plans · Road Trip 2026" description="Day-by-day route guide for the Palm Springs to Chicago drive." currentPath="/days/">
+  <section class="day-grid">
+    {days.map((day) => <DayCard day={day} />)}
+  </section>
+</BaseLayout>

@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { days, routeLinks } from '../data/trip.js';
+---
+
+<BaseLayout title="Map Links · Road Trip 2026" description="Route map links for the Palm Springs to Chicago drive." currentPath="/map/">
+  <PageHero
+    eyebrow="Map links"
+    title="Open the whole trip at once, or hand off one day at a time when you need it."
+    text="This page is the clean navigation handoff: one link for the full route, plus one link per day when it is time to drive a specific segment. Use the day pages when you want the sightseeing and charging context behind those links."
+    actions={[
+      { label: 'Open full route in Google Maps', href: routeLinks.fullTrip, external: true },
+      { label: 'Browse day pages', href: '/days/', variant: 'ghost' },
+    ]}
+    stats={[
+      { value: 'Palm Springs', label: 'Departure' },
+      { value: 'Chicago', label: 'Finish' },
+      { value: `${days.length} daily links`, label: 'Segment handoffs' },
+      { value: 'Full trip + day links', label: 'Map choices' },
+    ]}
+  />
+
+  <section class="map-board panel">
+    <p class="eyebrow">Trip shape</p>
+    <h2>The overall route and overnight rhythm at a glance.</h2>
+    <div class="route-map-shell" aria-label="Trip map with overnight anchors">
+      <svg class="route-map-svg" viewBox="0 0 1000 520" aria-hidden="true" preserveAspectRatio="none">
+        <path class="route-map-road route-map-road-back" d="M 85 420 C 160 385, 225 360, 300 320 S 445 255, 515 262 S 665 270, 770 220 S 870 165, 925 108" />
+        <path class="route-map-road route-map-road-main" d="M 85 420 C 160 385, 225 360, 300 320 S 445 255, 515 262 S 665 270, 770 220 S 870 165, 925 108" />
+        <path class="route-map-highway" d="M 83 430 C 156 394, 222 369, 297 329 S 444 264, 515 272 S 665 280, 770 230 S 869 174, 923 117" />
+      </svg>
+      <div class="route-map-points">
+        <div class="route-map-point" style="left:9%; top:69%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Palm Springs</strong><span>Day 1 start</span></span></div>
+        <div class="route-map-point" style="left:32%; top:54%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Flagstaff</strong><span>Arizona overnight</span></span></div>
+        <div class="route-map-point" style="left:49%; top:49%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Tucumcari</strong><span>Neon motel night</span></span></div>
+        <div class="route-map-point" style="left:64%; top:47%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Oklahoma City</strong><span>Mid-route city stop</span></span></div>
+        <div class="route-map-point" style="left:80%; top:32%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>St. Louis</strong><span>Final overnight</span></span></div>
+        <div class="route-map-point" style="left:93%; top:22%;"><span class="route-map-dot"></span><span class="route-map-label"><strong>Chicago</strong><span>Finish line</span></span></div>
+      </div>
+    </div>
+    <div class="route-legend">
+      <strong>Best use of this page</strong>
+      <p>Keep it simple: use the full-route link for the whole trip and the day links when you want the exact segment handed to navigation.</p>
+    </div>
+  </section>
+
+  <section class="map-links-grid">
+    <article class="map-link-card panel">
+      <span class="place">Full route</span>
+      <h3>Palm Springs to Chicago</h3>
+      <p>The whole trip in one handoff — best for orientation, previewing the overall line, or seeing the overnight structure at once.</p>
+      <div class="map-link-actions">
+        <a class="button" href={routeLinks.fullTrip} target="_blank" rel="noreferrer">Open in Google Maps</a>
+        <button class="copy-link" type="button" data-copy-link={routeLinks.fullTrip}>Copy link</button>
+      </div>
+    </article>
+
+    {days.map((day) => (
+      <article class="map-link-card panel">
+        <span class="place">Day {day.dayNumber}</span>
+        <h3>{day.title}</h3>
+        <p>{day.route}</p>
+        <div class="map-link-actions map-link-actions-stack">
+          <a class="button" href={day.mapLink} target="_blank" rel="noreferrer">Open in Google Maps</a>
+          <a class="button ghost" href={`/days/${day.slug}/`}>Open day guide</a>
+          <button class="copy-link" type="button" data-copy-link={day.mapLink}>Copy link</button>
+        </div>
+      </article>
+    ))}
+  </section>
+</BaseLayout>

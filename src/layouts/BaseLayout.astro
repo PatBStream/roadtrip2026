@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+
+const {
+  title = 'Road Trip 2026',
+  description = 'Route 66-inspired road trip guide from Palm Springs to Chicago.',
+  currentPath = '/',
+} = Astro.props;
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/days/', label: 'Daily Plans' },
+  { href: '/charging/', label: 'Charging' },
+  { href: '/map/', label: 'Map' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..800,100&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <a class="brand" href="/">
+          <span class="brand-mark">🛣️</span>
+          <span>
+            <strong>Road Trip 2026</strong>
+            <small>Palm Springs → Chicago</small>
+          </span>
+        </a>
+        <button class="menu-toggle" type="button" data-menu-toggle aria-expanded="false" aria-controls="site-nav">
+          Menu
+        </button>
+        <nav id="site-nav" class="site-nav" data-nav>
+          {navItems.map((item) => {
+            const isActive = item.href === '/'
+              ? currentPath === '/'
+              : item.href === '/days/'
+                ? currentPath.startsWith('/days/')
+                : currentPath.startsWith(item.href);
+
+            return (
+              <a href={item.href} class={isActive ? 'active' : ''}>
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="site-footer">
+        <div class="footer-note">
+          <strong>Road Trip 2026</strong>
+          <p>A Route 66-flavored run from Palm Springs to Chicago, with daily stops, charging strategy, and map handoff links ready for the road.</p>
+          <div class="kicker-row">
+            <span class="micro-pill">5 driving days</span>
+            <span class="micro-pill">2025 Tesla Model Y</span>
+            <span class="micro-pill">3 travelers</span>
+          </div>
+        </div>
+        <div class="footer-links">
+          <a href="/map/">Route map links</a>
+          <a href="/charging/">Charging strategy</a>
+          <a href="/days/">Daily plans</a>
+        </div>
+      </footer>
+    </div>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>
