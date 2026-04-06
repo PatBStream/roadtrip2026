@@ -4,33 +4,10 @@ import DayCard from '../components/DayCard.astro';
 import { days, routeLinks, trip } from '../data/trip.js';
 
 const primaryNav = [
-  { title: 'Daily Plans', href: '/days/', text: 'Open each drive day for the route, stop order, lodging notes, and charging flow.' },
-  { title: 'Charging', href: '/charging/', text: 'See the EV plan built around meals, breaks, and overnight resets.' },
-  { title: 'Map Links', href: '/map/', text: 'Jump straight into Google Maps for the full route or each day segment.' },
+  { title: 'Days', href: '/days/', text: 'Open each drive day for route order, stop details, lodging, and charging notes.' },
+  { title: 'Charging', href: '/charging/', text: 'See the EV charging plan aligned with meals, breaks, and overnight stops.' },
+  { title: 'Map', href: '/map/', text: 'Jump into the full route or day-by-day links in Google Maps.' },
 ];
-
-const routeMapPoints = [
-  { x: 9, y: 68, label: 'Palm Springs', detail: 'Start', href: '/days/day-1/' },
-  { x: 20, y: 61, label: 'Amboy', detail: 'Roy’s Motel & Cafe', href: days[0].stops.find((stop) => stop.name === 'Roy’s Motel & Cafe')?.url },
-  { x: 28, y: 58, label: 'Oatman', detail: 'Historic mining town', href: days[0].stops.find((stop) => stop.name === 'Oatman')?.url },
-  { x: 35, y: 49, label: 'Winslow', detail: 'Standin’ on the Corner', href: days[1].stops.find((stop) => stop.name === 'Standin’ on the Corner Park')?.url },
-  { x: 42, y: 46, label: 'Petrified Forest', detail: 'National Park stop', href: days[1].stops.find((stop) => stop.name === 'Petrified Forest National Park')?.url },
-  { x: 50, y: 49, label: 'Tucumcari', detail: 'Neon motel night', href: '/days/day-2/' },
-  { x: 56, y: 51, label: 'Cadillac Ranch', detail: 'Amarillo midpoint', href: days[2].stops.find((stop) => stop.name === 'Cadillac Ranch')?.url },
-  { x: 64, y: 48, label: 'Oklahoma City', detail: 'Day 3 finish', href: '/days/day-3/' },
-  { x: 79, y: 45, label: 'St. Louis', detail: 'Day 4 finish', href: '/days/day-4/' },
-  { x: 88, y: 35, label: 'Pontiac', detail: 'Route 66 museum', href: days[4].stops.find((stop) => stop.name === 'Route 66 Hall of Fame & Museum')?.url },
-  { x: 92, y: 25, label: 'Chicago', detail: 'Finish', href: '/days/day-5/' },
-];
-
-const featuredLinks = [
-  days[0].stops.find((stop) => stop.name === 'Roy’s Motel & Cafe'),
-  days[0].stops.find((stop) => stop.name === 'Oatman'),
-  days[1].stops.find((stop) => stop.name === 'Petrified Forest National Park'),
-  days[2].stops.find((stop) => stop.name === 'Cadillac Ranch'),
-  days[3].stops.find((stop) => stop.name === 'Meramec Caverns'),
-  days[4].stops.find((stop) => stop.name === 'Route 66 Hall of Fame & Museum'),
-].filter(Boolean);
 ---
 
 <BaseLayout title="Road Trip 2026" description="A Route 66-style Palm Springs to Chicago road trip guide with daily plans, charging, and route links." currentPath="/">
@@ -39,130 +16,21 @@ const featuredLinks = [
       <div class="home-hero-copy">
         <p class="eyebrow">{trip.startDate}–{trip.endDate} · Palm Springs to Chicago</p>
         <p class="home-overline">Route 66 road trip guide</p>
-        <h1>
-          Five days of desert light, roadside classics, neon towns, and a Chicago finish.
-          <span>Built to be easy to use from the road — not just nice to look at the night before.</span>
-        </h1>
-        <p class="home-lede">
-          This guide keeps the fun parts and the practical parts together: where to stop, how each day flows, when charging fits naturally,
-          and where to hand the route off to Google Maps without losing the plot.
-        </p>
+        <h1>Plan the full Route 66-style drive in minutes, then use it quickly from your phone on the road.</h1>
+        <p class="home-lede">One place for day plans, charging flow, and route links from Palm Springs to Chicago.</p>
         <div class="hero-actions">
           <a class="button" href="/days/">Open the day-by-day plan</a>
           <a class="button ghost" href={routeLinks.fullTrip} target="_blank" rel="noreferrer">Open the full route in Google Maps</a>
         </div>
-        <div class="hero-microstats">
-          <span class="micro-pill">5 driving days</span>
-          <span class="micro-pill">3 travelers</span>
-          <span class="micro-pill">2025 Tesla Model Y</span>
-          <span class="micro-pill">Route 66 flavor</span>
-        </div>
-        <div class="home-hero-quote">
-          <strong>What this site is for</strong>
-          <p>A polished road companion: browse the trip at home, then use it quickly on the move.</p>
-        </div>
       </div>
-
-      <aside class="home-hero-side">
-        <div class="home-hero-photo">
-          <img src={days[0].image} alt={days[0].imageAlt} />
-          <div class="home-hero-photo-caption">
-            <strong>Opening mood</strong>
-            <span>Roy’s in Amboy sets the tone immediately: big sky, classic signage, and proper road-trip energy.</span>
-          </div>
-        </div>
-        <div class="home-hero-side-copy">
-          <p class="eyebrow">Travel setup</p>
-          <h2>Three people, one loaded EV, and a route built to stay fun.</h2>
-          <p>
-            The pacing is designed around realistic drive days, memorable stops, and charging that feels like part of the trip instead of an interruption.
-          </p>
-        </div>
-      </aside>
-    </div>
-  </section>
-
-  <section class="route-marquee panel" aria-label="Trip themes">
-    <div class="route-marquee-track">
-      {trip.tags.concat(trip.tags).map((tag) => <span class="route-pill">{tag}</span>)}
-    </div>
-  </section>
-
-  <section class="summary-grid panel">
-    <div>
-      <strong>Departure feel</strong>
-      <p>Palm Springs into the Mojave, with Amboy and Oatman doing the heavy lifting right away.</p>
-    </div>
-    <div>
-      <strong>Trip character</strong>
-      <p>Neon motels, strange Americana, scenic desert stretches, and a strong Illinois finale.</p>
-    </div>
-    <div>
-      <strong>Built for real use</strong>
-      <p>Each day page keeps the route, stop order, charging, and lodging easy to scan from a phone.</p>
-    </div>
-    <div>
-      <strong>Finish</strong>
-      <p>St. Louis to Pontiac to Chicago — a final stretch that feels like an arrival, not just an endpoint.</p>
-    </div>
-  </section>
-
-  <section class="panel map-board home-map-board real-route-map-panel home-route-map-full">
-    <p class="eyebrow">Route map</p>
-    <h2>The overall trip line, from Southern California to Chicago.</h2>
-    <p class="hero-copy home-route-map-copy">
-      This works best as a fast visual overview: the big line of the trip, the anchor stops that define it, and direct jump points into day pages or destination links.
-    </p>
-    <div class="route-map-shell" aria-label="Route map from Palm Springs to Chicago with linked stops">
-      <svg class="route-map-svg" viewBox="0 0 1000 520" aria-hidden="true" preserveAspectRatio="none">
-        <path class="route-map-road route-map-road-back" d="M 80 420 C 150 395, 215 370, 280 330 S 430 265, 500 270 S 650 275, 760 225 S 865 165, 920 105" />
-        <path class="route-map-road route-map-road-main" d="M 80 420 C 150 395, 215 370, 280 330 S 430 265, 500 270 S 650 275, 760 225 S 865 165, 920 105" />
-        <path class="route-map-highway" d="M 78 430 C 145 405, 210 381, 276 340 S 428 275, 500 280 S 650 285, 760 235 S 864 174, 918 115" />
-      </svg>
-      <div class="route-map-points">
-        {routeMapPoints.map((point) => (
-          <a
-            class="route-map-point"
-            href={point.href}
-            style={`left:${point.x}%; top:${point.y}%;`}
-            target={point.href?.startsWith('http') ? '_blank' : undefined}
-            rel={point.href?.startsWith('http') ? 'noreferrer' : undefined}
-          >
-            <span class="route-map-dot"></span>
-            <span class="route-map-label">
-              <strong>{point.label}</strong>
-              <span>{point.detail}</span>
-            </span>
-          </a>
-        ))}
-      </div>
-    </div>
-    <div class="route-legend">
-      <strong>Best use of this map</strong>
-      <p>Use it for fast orientation, then jump into the day pages when you want the full stop sequence and planning detail.</p>
-    </div>
-  </section>
-
-  <section class="panel page-intro home-featured-links-section">
-    <p class="eyebrow">Featured stop links</p>
-    <h2>The trip’s headline stops, with direct links to the places themselves.</h2>
-    <p>
-      If you just want the signature hits, start here. These links cover the stops that most define the overall route and give the trip its shape.
-    </p>
-    <div class="clickable-stop-grid" aria-label="Featured destination website links">
-      {featuredLinks.map((stop) => (
-        <a class="stop-orb-link" href={stop.url} target="_blank" rel="noreferrer">
-          <span class="stop-orb-title">{stop.name}</span>
-          <span class="stop-orb-detail">{stop.location}</span>
-        </a>
-      ))}
-    </div>
-    <div class="hero-actions">
-      <a class="button ghost" href="/map/">See all map links</a>
     </div>
   </section>
 
   <section class="quick-grid panel home-nav-grid">
+    <div class="home-style-intro">
+      <p class="eyebrow">Start here</p>
+      <h2>Jump into the part of the plan you need right now.</h2>
+    </div>
     {primaryNav.map((item) => (
       <div>
         <strong>{item.title}</strong>
@@ -172,37 +40,10 @@ const featuredLinks = [
     ))}
   </section>
 
-  <section class="feature-split">
-    <article class="panel page-intro">
-      <p class="eyebrow">Why the route works</p>
-      <h2>Enough variety to keep each day distinct, without making the trip feel overpacked.</h2>
-      <p>
-        The route moves cleanly from desert icons to national-park scenery to roadside oddities and then into a classic Illinois finish.
-        The point is not just distance covered — it is making each day feel like its own chapter.
-      </p>
-      <ul class="expectations home-excitement-list">
-        <li><strong>Best early stretch:</strong> Amboy through Oatman for instant road-trip atmosphere.</li>
-        <li><strong>Big scenic payoff:</strong> Petrified Forest if the group wants one deeper stop.</li>
-        <li><strong>Most iconic roadside sequence:</strong> Midpoint Café, Cadillac Ranch, and Amarillo.</li>
-        <li><strong>Best closing rhythm:</strong> Illinois giants, Pontiac murals, then the Chicago arrival.</li>
-      </ul>
-      <div class="hero-actions">
-        <a class="button" href="/charging/">Review charging strategy</a>
-        <a class="button ghost" href="/days/day-1/">Start with Day 1</a>
-      </div>
-    </article>
-
-    <aside class="panel feature-media home-secondary-photo">
-      <img src={days[2].image} alt={days[2].imageAlt} />
-      <p class="small-note">Cadillac Ranch marks the point where the trip stops feeling hypothetical and starts feeling claimed.</p>
-    </aside>
-  </section>
-
   <section>
     <div class="panel home-style-intro">
       <p class="eyebrow">Day-by-day route</p>
-      <h2>Open each day for the full route, stop order, lodging notes, and charging choices.</h2>
-      <p class="hero-copy">The day pages are the practical center of the site: the route in order, the stops that matter, and the planning details you actually need.</p>
+      <h2>Preview each day before you dive into full stop and charging detail.</h2>
     </div>
     <div class="day-grid">
       {days.map((day) => <DayCard day={day} />)}
