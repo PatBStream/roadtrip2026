@@ -26,3 +26,8 @@ Thumbs.db
 # Coverage / test output
 coverage/
 .nyc_output/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
