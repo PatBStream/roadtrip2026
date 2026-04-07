@@ -954,7 +954,9 @@ section,
 }
 
 .home-hero-copy h1 {
-  max-width: 13ch;
+  max-width: 16ch;
+  text-wrap: balance;
+  text-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
 }
 
 .home-hero-quote,
