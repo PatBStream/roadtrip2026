@@ -61,37 +61,18 @@ import { chargingAssumptions, days } from '../data/trip.js';
         <p class="eyebrow">Day {day.dayNumber} · {day.date}</p>
         <h2>{day.title}</h2>
         <p>{day.route}</p>
+        <p class="small-note">Trip-wide strategy view: this page keeps each day to a quick charging summary so you can spot the overall rhythm.</p>
+        <ul class="meta-list compact">
+          {day.chargingPlan.slice(0, 2).map((charge) => (
+            <li>
+              <strong>{charge.purpose}:</strong> {charge.stop} ({charge.legMiles}, arrive {charge.arrivalSoc}, charge to {charge.chargeTo})
+            </li>
+          ))}
+        </ul>
         <div class="inline-actions">
           <a class="button ghost" href={`/days/${day.slug}/`}>Open day guide</a>
           <a class="button ghost" href={day.mapLink} target="_blank" rel="noreferrer">Open route in Google Maps</a>
         </div>
-      </div>
-      <div class="charge-grid">
-        {day.chargingPlan.map((charge) => (
-          <article class="charge-card">
-            <span class="place">{charge.purpose}</span>
-            <h3>{charge.stop}</h3>
-            <p>{charge.notes}</p>
-            <div class="charge-rail">
-              <div>
-                <span>Leg distance</span>
-                <strong>{charge.legMiles}</strong>
-              </div>
-              <div>
-                <span>Arrival SOC</span>
-                <strong>{charge.arrivalSoc}</strong>
-              </div>
-              <div>
-                <span>Target charge</span>
-                <strong>{charge.chargeTo}</strong>
-              </div>
-              <div>
-                <span>Expected stop</span>
-                <strong>{charge.duration}</strong>
-              </div>
-            </div>
-          </article>
-        ))}
       </div>
     </section>
   ))}
