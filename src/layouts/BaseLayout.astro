@@ -7,11 +7,17 @@ const {
   currentPath = '/',
 } = Astro.props;
 
+export const canonicalLabels = {
+  dailyPlans: 'Daily Plans',
+  chargingPlan: 'Charging Plan',
+  mapLinks: 'Map Links',
+};
+
 const navItems = [
   { href: '/', label: 'Home' },
-  { href: '/days/', label: 'Daily Plans' },
-  { href: '/charging/', label: 'Charging' },
-  { href: '/map/', label: 'Map' },
+  { href: '/days/', label: canonicalLabels.dailyPlans },
+  { href: '/charging/', label: canonicalLabels.chargingPlan },
+  { href: '/map/', label: canonicalLabels.mapLinks },
 ];
 ---
 
@@ -63,16 +69,16 @@ const navItems = [
       <footer class="site-footer">
         <div class="footer-note">
           <strong>Road Trip 2026</strong>
-          <p>A Route 66-flavored run from Palm Springs to Chicago, with daily stops, charging strategy, and map handoff links ready for the road.</p>
+          <p>A Route 66-flavored run from Palm Springs to Chicago, with daily stops, charging plan, and map links ready for the road.</p>
           <div class="kicker-row">
             <span class="micro-pill">5 driving days</span>
             <span class="micro-pill">2025 Tesla Model Y</span>
           </div>
         </div>
         <div class="footer-links">
-          <a href="/map/">Route map links</a>
-          <a href="/charging/">Charging strategy</a>
-          <a href="/days/">Daily plans</a>
+          <a href="/map/">{canonicalLabels.mapLinks}</a>
+          <a href="/charging/">{canonicalLabels.chargingPlan}</a>
+          <a href="/days/">{canonicalLabels.dailyPlans}</a>
         </div>
       </footer>
     </div>
