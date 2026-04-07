@@ -6,7 +6,6 @@ const { day } = Astro.props;
   <div class="day-card-media">
     <img src={day.image} alt={day.imageAlt ?? `Featured image for ${day.title}`} loading="lazy" />
     <div class="day-card-badges">
-      <span class="micro-pill">Day {day.dayNumber}</span>
       <span class="micro-pill">{day.driveHours}</span>
     </div>
   </div>
