@@ -1,5 +1,16 @@
 ---
+import { canonicalLabels } from '../layouts/BaseLayout.astro';
+
 const { eyebrow, title, text, actions = [], stats = [] } = Astro.props;
+
+const normalizedActions = actions.map((action) => ({
+  ...action,
+  label: action.label
+    ?.replace(/open route map links/gi, `Open ${canonicalLabels.mapLinks.toLowerCase()}`)
+    ?.replace(/route map links/gi, canonicalLabels.mapLinks)
+    ?.replace(/map handoff/gi, canonicalLabels.mapLinks.toLowerCase())
+    ?.replace(/charging strategy/gi, canonicalLabels.chargingPlan.toLowerCase()),
+}));
 ---
 
 <section class="hero panel">
@@ -8,9 +19,9 @@ const { eyebrow, title, text, actions = [], stats = [] } = Astro.props;
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h1>{title}</h1>
       {text && <p class="hero-copy">{text}</p>}
-      {actions.length > 0 && (
+      {normalizedActions.length > 0 && (
         <div class="hero-actions">
-          {actions.map((action) => (
+          {normalizedActions.map((action) => (
             <a class={action.variant === 'ghost' ? 'button ghost' : 'button'} href={action.href} target={action.external ? '_blank' : undefined} rel={action.external ? 'noreferrer' : undefined}>
               {action.label}
             </a>

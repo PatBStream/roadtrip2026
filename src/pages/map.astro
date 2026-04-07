@@ -1,17 +1,17 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout, { canonicalLabels } from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { days, routeLinks } from '../data/trip.js';
 ---
 
-<BaseLayout title="Map Links · Road Trip 2026" description="Route map links for the Palm Springs to Chicago drive." currentPath="/map/">
+<BaseLayout title={`${canonicalLabels.mapLinks} · Road Trip 2026`} description="Route map links for the Palm Springs to Chicago drive." currentPath="/map/">
   <PageHero
-    eyebrow="Map links"
+    eyebrow={canonicalLabels.mapLinks}
     title="Open the whole trip at once, or hand off one day at a time when you need it."
     text="This page is the clean navigation handoff: one link for the full route, plus one link per day when it is time to drive a specific segment. Use the day pages when you want the sightseeing and charging context behind those links."
     actions={[
       { label: 'Open full route in Google Maps', href: routeLinks.fullTrip, external: true },
-      { label: 'Browse day pages', href: '/days/', variant: 'ghost' },
+      { label: `Browse ${canonicalLabels.dailyPlans.toLowerCase()}`, href: '/days/', variant: 'ghost' },
     ]}
     stats={[
       { value: 'Palm Springs', label: 'Departure' },

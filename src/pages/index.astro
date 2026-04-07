@@ -1,12 +1,12 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout, { canonicalLabels } from '../layouts/BaseLayout.astro';
 import DayCard from '../components/DayCard.astro';
 import { days, routeLinks, trip } from '../data/trip.js';
 
 const primaryNav = [
-  { title: 'Days', href: '/days/', text: 'Open each drive day for route order, stop details, lodging, and charging notes.' },
-  { title: 'Charging', href: '/charging/', text: 'See the EV charging plan aligned with meals, breaks, and overnight stops.' },
-  { title: 'Map', href: '/map/', text: 'Jump into the full route or day-by-day links in Google Maps.' },
+  { title: canonicalLabels.dailyPlans, href: '/days/', text: 'Open each drive day for route order, stop details, lodging, and charging notes.' },
+  { title: canonicalLabels.chargingPlan, href: '/charging/', text: 'See the EV charging plan aligned with meals, breaks, and overnight stops.' },
+  { title: canonicalLabels.mapLinks, href: '/map/', text: 'Jump into the full route or day-by-day links in Google Maps.' },
 ];
 ---
 
@@ -17,9 +17,9 @@ const primaryNav = [
         <p class="eyebrow">{trip.startDate}–{trip.endDate} · Palm Springs to Chicago</p>
         <p class="home-overline">Route 66 road trip guide</p>
         <h1>Plan the full Route 66-style drive in minutes, then use it quickly from your phone on the road.</h1>
-        <p class="home-lede">One place for day plans, charging flow, and route links from Palm Springs to Chicago.</p>
+        <p class="home-lede">One place for daily plans, charging plan flow, and map links from Palm Springs to Chicago.</p>
         <div class="hero-actions">
-          <a class="button" href="/days/">Open the day-by-day plan</a>
+          <a class="button" href="/days/">Open {canonicalLabels.dailyPlans.toLowerCase()}</a>
           <a class="button ghost" href={routeLinks.fullTrip} target="_blank" rel="noreferrer">Open the full route in Google Maps</a>
         </div>
       </div>

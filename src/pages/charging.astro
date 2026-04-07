@@ -1,17 +1,17 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout, { canonicalLabels } from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import { chargingAssumptions, days } from '../data/trip.js';
 ---
 
-<BaseLayout title="Charging Plan · Road Trip 2026" description="EV charging strategy for the Palm Springs to Chicago road trip." currentPath="/charging/">
+<BaseLayout title={`${canonicalLabels.chargingPlan} · Road Trip 2026`} description="EV charging plan for the Palm Springs to Chicago road trip." currentPath="/charging/">
   <PageHero
-    eyebrow="Charging plan"
-    title="An EV charging strategy that supports the trip instead of hijacking it."
+    eyebrow={canonicalLabels.chargingPlan}
+    title="An EV charging plan that supports the trip instead of hijacking it."
     text="These charging stops assume a fully loaded 2025 Tesla Model Y with three travelers. The goal is straightforward: charge where it naturally overlaps with food, rest, or a useful pause, and keep the drive feeling smooth."
     actions={[
       { label: 'Browse day guides', href: '/days/' },
-      { label: 'Open map links', href: '/map/', variant: 'ghost' },
+      { label: `Open ${canonicalLabels.mapLinks.toLowerCase()}`, href: '/map/', variant: 'ghost' },
     ]}
     stats={[
       { value: '100%', label: 'Day 1 departure' },
@@ -24,7 +24,7 @@ import { chargingAssumptions, days } from '../data/trip.js';
   <section class="feature-split charging-feature-split">
     <article class="panel">
       <p class="eyebrow">Planning assumptions</p>
-      <h2>What the charging strategy is based on.</h2>
+      <h2>What the charging plan is based on.</h2>
       <ul class="expectations">
         {chargingAssumptions.map((item) => <li>{item}</li>)}
       </ul>
