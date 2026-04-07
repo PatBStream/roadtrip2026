@@ -43,6 +43,13 @@ const orderedStops = (day.orderedPlan ?? [])
     };
   })
   .filter(Boolean);
+
+const chargePlanById = new Map(day.chargingPlan.map((charge) => [charge.id, charge]));
+const orderedChargingPlan = (day.orderedPlan ?? [])
+  .filter((item) => item.type === 'charging')
+  .map((item) => chargePlanById.get(item.ref))
+  .filter(Boolean);
+const chargingCards = orderedChargingPlan.length > 0 ? orderedChargingPlan : day.chargingPlan;
 ---
 
 <BaseLayout title={`${day.title} · Road Trip 2026`} description={`Detailed route guide for ${day.title}.`} currentPath="/days/">
@@ -183,8 +190,9 @@ const orderedStops = (day.orderedPlan ?? [])
   <section class="panel">
     <p class="eyebrow">Charging plan</p>
     <h2>Candidate charging flow for this day.</h2>
+    <p class="small-note">Turn-by-turn operational view: these charging cards stay in route order so each stop is actionable while driving the day.</p>
     <div class="charge-grid">
-      {day.chargingPlan.map((charge) => (
+      {chargingCards.map((charge) => (
         <article class="charge-card">
           <span class="place">{charge.purpose}</span>
           <h3>{charge.stop}</h3>
