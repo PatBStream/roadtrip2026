@@ -147,46 +147,6 @@ const orderedStops = (day.orderedPlan ?? [])
   </section>
 
   <section class="detail-grid">
-    <article class="panel">
-      <p class="eyebrow">Stops to hit</p>
-      <h2>The day plan</h2>
-      <div class="stop-grid">
-        {day.stops.map((stop) => (
-          <article class="stop-card">
-            <span class="stop-label">{stop.category}</span>
-            <span class="place">{stop.location}</span>
-            {stop.url ? (
-              <h3>
-                <a class="stop-title-link" href={stop.url} target="_blank" rel="noreferrer">
-                  {stop.name}
-                  <span aria-hidden="true">↗</span>
-                </a>
-              </h3>
-            ) : (
-              <h3>{stop.name}</h3>
-            )}
-            <p>{stop.blurb}</p>
-            <p class="small-note">{stop.practical}</p>
-            <div class="stop-meta">
-              <div>
-                <span>Suggested time</span>
-                <strong>{stop.timing}</strong>
-              </div>
-              <div>
-                <span>Role in route</span>
-                <strong>{stop.category}</strong>
-              </div>
-            </div>
-            {stop.url && (
-              <div class="card-actions">
-                <a class="stop-inline-link" href={stop.url} target="_blank" rel="noreferrer">{stop.linkLabel ?? 'Stop website'}</a>
-              </div>
-            )}
-          </article>
-        ))}
-      </div>
-    </article>
-
     <aside class="panel">
       <p class="eyebrow">Vibe + lodging</p>
       <h2>How the day is meant to unfold.</h2>
