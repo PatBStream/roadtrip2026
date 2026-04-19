@@ -1,6 +1,9 @@
 export const MEMORY_NAV_LABEL = 'Memories';
 
 export const uploadConstraints = {
+  batch: {
+    maxImageCount: 10,
+  },
   image: {
     maxBytes: 20 * 1024 * 1024,
     acceptedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/heic'],

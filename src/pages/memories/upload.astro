@@ -35,7 +35,7 @@ const user = pageUserOrNull(Astro.locals);
         <div class="quick-grid">
           <div>
             <strong>Images</strong>
-            <p>Up to {Math.round(uploadConstraints.image.maxBytes / (1024 * 1024))} MB each.</p>
+            <p>Up to {uploadConstraints.batch.maxImageCount} at once, and {Math.round(uploadConstraints.image.maxBytes / (1024 * 1024))} MB each.</p>
           </div>
           <div>
             <strong>Videos</strong>
@@ -49,8 +49,8 @@ const user = pageUserOrNull(Astro.locals);
 
         <form class="memory-upload-form" data-memory-upload-form>
           <label>
-            <span>Choose a photo or video</span>
-            <input type="file" accept="image/*,video/mp4,video/quicktime" />
+            <span>Choose photo(s) or one video</span>
+            <input type="file" accept="image/*,video/mp4,video/quicktime" multiple />
           </label>
 
           <label>
@@ -71,7 +71,7 @@ const user = pageUserOrNull(Astro.locals);
           </label>
 
           <button class="button" type="submit">Upload memory</button>
-          <p class="small-note" data-upload-status>Signed in as {user.displayName}. Images now use Cloudflare-resized previews in gallery/detail.</p>
+          <p class="small-note" data-upload-status>Signed in as {user.displayName}. You can upload up to {uploadConstraints.batch.maxImageCount} images at once, or one video.</p>
         </form>
       </section>
     </>
