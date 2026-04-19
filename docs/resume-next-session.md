@@ -38,9 +38,9 @@ Working:
 
 Deferred:
 
-- Cloudflare-compatible image derivatives
+- stronger image derivative strategy beyond the current on-demand Cloudflare resize path
 - audit visibility UI
-- upload-session cleanup
+- automated upload-session cleanup scheduling
 - more UX polish
 
 ## Best next actions

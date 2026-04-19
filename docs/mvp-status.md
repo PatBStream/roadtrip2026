@@ -18,7 +18,7 @@ The following are now implemented enough to test as an MVP:
 
 ## Still intentionally deferred
 
-- image thumbnail and preview derivative generation
+- persistent stored image derivative generation beyond the current on-demand Cloudflare resize path
 - better video preview handling
 - pagination/filter UX
 - stronger production-grade abuse/rate-limit hardening

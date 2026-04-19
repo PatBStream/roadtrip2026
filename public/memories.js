@@ -41,9 +41,13 @@ async function bootstrapUploadForm() {
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
+
     const file = fileInput?.files?.[0];
     if (!file) {
       if (status) status.textContent = 'Choose a file first.';
+      if (submitButton) submitButton.disabled = false;
       return;
     }
 
@@ -60,6 +64,7 @@ async function bootstrapUploadForm() {
 
     if (!createResult.ok) {
       if (status) status.textContent = createResult.data?.error ?? 'Could not create upload session.';
+      if (submitButton) submitButton.disabled = false;
       return;
     }
 
@@ -69,6 +74,7 @@ async function bootstrapUploadForm() {
 
     if (!putResult.ok) {
       if (status) status.textContent = putResult.data?.error ?? 'Could not upload file to storage.';
+      if (submitButton) submitButton.disabled = false;
       return;
     }
 
@@ -86,10 +92,13 @@ async function bootstrapUploadForm() {
 
     if (!completeResult.ok) {
       if (status) status.textContent = completeResult.data?.error ?? 'Could not complete upload.';
+      if (submitButton) submitButton.disabled = false;
       return;
     }
 
     if (status) status.innerHTML = `Upload complete. <a href="/memories/detail/?id=${encodeURIComponent(completeResult.data.mediaId)}">Open detail page</a>`;
+    form.reset();
+    if (submitButton) submitButton.disabled = false;
   });
 }
 

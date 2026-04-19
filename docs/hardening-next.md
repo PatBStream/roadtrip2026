@@ -14,13 +14,13 @@ Completed in current branch:
 
 Still recommended next:
 
-- remove the emergency seed endpoint entirely, or move it to a CLI-only/admin-only maintenance path
+- remove the emergency seed endpoint entirely, or move it to a CLI-only/admin-only maintenance path, after current owner-admin flow has baked a bit more
 - add stronger admin separation than reusing `SESSION_SECRET` as the emergency seeding key
 - add audit visibility in the UI for destructive actions
 
 ## Media handling
 
-- add a Cloudflare-compatible image derivative path
+- expand the current Cloudflare-compatible on-demand image resizing path into a more complete derivative strategy if needed
 - add better video preview handling
 - enforce more explicit content-type verification if needed
 
@@ -32,6 +32,6 @@ Still recommended next:
 
 ## Data lifecycle
 
-- add cleanup for abandoned upload sessions
+- automate cleanup for abandoned upload sessions, beyond the current owner-triggered cleanup endpoint
 - add audit visibility for destructive actions
 - consider soft-delete retention policy only if permanent delete proves too aggressive in real use

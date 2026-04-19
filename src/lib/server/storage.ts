@@ -8,9 +8,14 @@ export function getMediaBucket(locals: App.Locals) {
   return bucket;
 }
 
-export function mediaObjectUrl(key: string | null) {
+export function mediaObjectUrl(key: string | null, options?: { width?: number; fit?: 'scale-down' | 'contain' | 'cover' }) {
   if (!key) return null;
-  return `/api/media-object?key=${encodeURIComponent(key)}`;
+
+  const params = new URLSearchParams({ key });
+  if (options?.width) params.set('width', String(options.width));
+  if (options?.fit) params.set('fit', options.fit);
+
+  return `/api/media-object?${params.toString()}`;
 }
 
 export async function objectExists(locals: App.Locals, key: string) {

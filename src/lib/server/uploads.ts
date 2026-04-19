@@ -1,6 +1,6 @@
 import { createId } from './ids';
 import { getDb } from './db';
-import { objectExists } from './storage';
+import { getMediaBucket, objectExists } from './storage';
 import type { MediaType } from '../shared/memories';
 
 export async function createUploadSession(locals: App.Locals, input: {
@@ -81,4 +81,37 @@ export async function completeUploadSession(locals: App.Locals, input: {
     mediaId,
     storageKeyOriginal: upload.storage_key_original,
   };
+}
+
+export async function cleanupExpiredUploadSessions(locals: App.Locals, options?: { limit?: number }) {
+  const db = getDb(locals);
+  const bucket = getMediaBucket(locals);
+  const limit = Math.max(1, Math.min(options?.limit ?? 50, 200));
+
+  const result = await db.prepare(`
+    SELECT id, storage_key_original
+    FROM upload_sessions
+    WHERE status = 'pending' AND expires_at < ?
+    ORDER BY expires_at ASC
+    LIMIT ?
+  `).bind(new Date().toISOString(), limit).all<{ id: string; storage_key_original: string | null }>();
+
+  const rows = result.results ?? [];
+
+  for (const row of rows) {
+    if (row.storage_key_original) {
+      await bucket.delete(row.storage_key_original).catch(() => null);
+    }
+  }
+
+  if (rows.length > 0) {
+    const placeholders = rows.map(() => '?').join(', ');
+    await db.prepare(`
+      UPDATE upload_sessions
+      SET status = 'expired'
+      WHERE id IN (${placeholders})
+    `).bind(...rows.map((row) => row.id)).run();
+  }
+
+  return { cleaned: rows.length };
 }

@@ -39,7 +39,9 @@ const items = user ? await listRecentMedia(Astro.locals).catch(() => []) : [];
         {items.length > 0 ? (
           <div class="memory-grid">
             {items.map((item: any) => {
-              const imageUrl = mediaObjectUrl(item.storage_key_thumbnail) ?? mediaObjectUrl(item.storage_key_preview) ?? mediaObjectUrl(item.storage_key_original);
+              const imageUrl = item.type === 'image'
+                ? mediaObjectUrl(item.storage_key_original, { width: 480, fit: 'cover' })
+                : mediaObjectUrl(item.storage_key_thumbnail) ?? mediaObjectUrl(item.storage_key_preview) ?? mediaObjectUrl(item.storage_key_original);
               return (
                 <a class="memory-card" href={`/memories/detail/?id=${encodeURIComponent(item.id)}`}>
                   {imageUrl ? (
