@@ -1,0 +1,61 @@
+export const prerender = false;
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { pageUserOrNull } from '../../lib/server/guards';
+const user = pageUserOrNull(Astro.locals);
+const memoryId = Astro.url.searchParams.get('id');
+---
+
+<BaseLayout title="Memory Detail · Road Trip 2026" description="Trip memory detail view." currentPath="/memories/">
+  <section class="panel">
+    <p class="eyebrow">Memory detail</p>
+    <h1>{memoryId ? `Memory ${memoryId}` : 'Memory detail'}</h1>
+    <p class="small-note">View the uploaded memory and comment with the group.</p>
+  </section>
+
+  {!user ? (
+    <section class="panel callout">
+      <strong class="kicker">Sign in required</strong>
+      <p>You need to sign in before viewing memory detail or comments.</p>
+      <div class="inline-actions">
+        <a class="button" href="/memories/sign-in/">Sign in</a>
+      </div>
+    </section>
+  ) : memoryId ? (
+    <>
+      <section class="panel">
+        <p class="small-note">Signed in as {user.displayName}.</p>
+        <div class="inline-actions">
+          <a class="button ghost" href="/memories/">Back to memories</a>
+          <button class="button ghost" type="button" data-memory-logout>Sign out</button>
+        </div>
+      </section>
+
+      <section data-memory-detail data-memory-id={memoryId}>
+        <div data-memory-body></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Comments</p>
+        <div data-memory-comments></div>
+
+        <form class="memory-upload-form" data-memory-comment-form>
+          <label>
+            <span>Add a comment</span>
+            <textarea name="body" rows="4" placeholder="Say something about this memory"></textarea>
+          </label>
+          <button class="button" type="submit">Post comment</button>
+          <p class="small-note" data-memory-comment-status></p>
+        </form>
+      </section>
+    </>
+  ) : (
+    <section class="panel callout">
+      <strong class="kicker">Missing memory id</strong>
+      <p>Open this page from a memory link so it knows what to load.</p>
+    </section>
+  )}
+
+  <script src="/memory-detail.js" defer></script>
+  <script src="/memories-nav.js" defer></script>
+</BaseLayout>

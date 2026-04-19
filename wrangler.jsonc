@@ -7,6 +7,22 @@
 		"directory": "./dist",
 		"binding": "ASSETS"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "roadtrip2026-db",
+			"database_id": "43a2f69e-a81c-448d-a67b-4664d69c2f98"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "MEDIA_BUCKET",
+			"bucket_name": "roadtrip2026-media"
+		}
+	],
+	"vars": {
+		"SESSION_SECRET": "REPLACE_WITH_SESSION_SECRET_VIA_SECRET_IN_PRODUCTION"
+	},
 	"observability": {
 		"enabled": true
 	}

@@ -1,0 +1,82 @@
+export const prerender = false;
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { uploadConstraints } from '../../lib/shared/memories';
+import { pageUserOrNull } from '../../lib/server/guards';
+
+const user = pageUserOrNull(Astro.locals);
+---
+
+<BaseLayout title="Upload Memories · Road Trip 2026" description="Upload trip photos and videos." currentPath="/memories/">
+  <section class="panel">
+    <p class="eyebrow">Upload</p>
+    <h1>Mobile-first upload flow</h1>
+    <p class="small-note">Upload a photo or short video for the group memory feed.</p>
+  </section>
+
+  {!user ? (
+    <section class="panel callout">
+      <strong class="kicker">Sign in required</strong>
+      <p>You need to sign in before creating uploads.</p>
+      <div class="inline-actions">
+        <a class="button" href="/memories/sign-in/">Sign in</a>
+      </div>
+    </section>
+  ) : (
+    <>
+      <section class="panel">
+        <div class="inline-actions">
+          <a class="button ghost" href="/memories/">Back to memories</a>
+          <button class="button ghost" type="button" data-memory-logout>Sign out</button>
+        </div>
+      </section>
+
+      <section class="panel upload-panel">
+        <div class="quick-grid">
+          <div>
+            <strong>Images</strong>
+            <p>Up to {Math.round(uploadConstraints.image.maxBytes / (1024 * 1024))} MB each.</p>
+          </div>
+          <div>
+            <strong>Videos</strong>
+            <p>Up to {Math.round(uploadConstraints.video.maxBytes / (1024 * 1024))} MB and {uploadConstraints.video.maxDurationSeconds} seconds.</p>
+          </div>
+          <div>
+            <strong>Privacy</strong>
+            <p>Invite-only access, private group sharing, and no public feed.</p>
+          </div>
+        </div>
+
+        <form class="memory-upload-form" data-memory-upload-form>
+          <label>
+            <span>Choose a photo or video</span>
+            <input type="file" accept="image/*,video/mp4,video/quicktime" />
+          </label>
+
+          <label>
+            <span>Caption</span>
+            <textarea rows="4" placeholder="Optional caption"></textarea>
+          </label>
+
+          <label>
+            <span>Trip day</span>
+            <select>
+              <option value="">Unassigned</option>
+              <option value="1">Day 1</option>
+              <option value="2">Day 2</option>
+              <option value="3">Day 3</option>
+              <option value="4">Day 4</option>
+              <option value="5">Day 5</option>
+            </select>
+          </label>
+
+          <button class="button" type="submit">Upload memory</button>
+          <p class="small-note" data-upload-status>Signed in as {user.displayName}.</p>
+        </form>
+      </section>
+    </>
+  )}
+
+  <script src="/memories.js" defer></script>
+  <script src="/memories-nav.js" defer></script>
+</BaseLayout>

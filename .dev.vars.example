@@ -1,0 +1,2 @@
+# Copy values from your local dev setup. Do not commit a real .dev.vars file.
+SESSION_SECRET=replace-with-a-long-random-secret

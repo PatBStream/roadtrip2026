@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Sign In · Memories · Road Trip 2026" description="Sign in to the private trip memories area." currentPath="/memories/">
+  <section class="panel">
+    <p class="eyebrow">Private memories</p>
+    <h1>Sign in to view and upload trip media.</h1>
+    <p class="small-note">This area is invite-only. Enter the same email address that was seeded as an invited user. There is currently no password field for MVP testing.</p>
+  </section>
+
+  <section class="panel upload-panel">
+    <form class="memory-upload-form" data-memory-signin-form>
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" placeholder="you@example.com" required />
+      </label>
+
+      <label>
+        <span>Display name</span>
+        <input type="text" name="displayName" placeholder="Optional display name" />
+      </label>
+
+      <button class="button" type="submit">Sign in</button>
+      <p class="small-note" data-signin-status>Use an email address that has already been invited.</p>
+    </form>
+  </section>
+
+  <script src="/memories-auth.js" defer></script>
+</BaseLayout>

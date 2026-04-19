@@ -6,9 +6,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "astro dev --host 0.0.0.0 --port 53000",
     "build": "astro build",
-    "preview": "npm run build && wrangler dev",
+    "preview": "npm run build && wrangler dev --ip 0.0.0.0 --port 53000",
+    "preview:astro": "astro preview --host 0.0.0.0 --port 53000",
     "generate-types": "wrangler types",
     "deploy": "npm run build && wrangler deploy"
   },
