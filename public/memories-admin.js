@@ -85,8 +85,13 @@ async function loadMedia() {
   }
 
   root.innerHTML = items.map((item) => `
-    <article class="panel admin-row">
-      <div>
+    <article class="panel admin-row admin-media-row">
+      <div class="admin-media-preview">
+        ${item.type === 'image' && (item.thumbnailUrl || item.previewUrl || item.originalUrl)
+          ? `<img src="${escapeHtml(item.thumbnailUrl || item.previewUrl || item.originalUrl)}" alt="${escapeHtml(item.caption || 'Trip memory')}" />`
+          : `<div class="memory-placeholder">${escapeHtml(item.type)}</div>`}
+      </div>
+      <div class="admin-media-body">
         <strong>${escapeHtml(item.uploaderName)}</strong>
         <p>${escapeHtml(item.caption || 'No caption')}</p>
         <p class="small-note">${escapeHtml(item.type)} · ${escapeHtml(item.status)} · ${escapeHtml(item.id)}</p>

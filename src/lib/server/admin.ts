@@ -47,9 +47,8 @@ export async function createInvite(locals: App.Locals, input: { email: string; d
 }
 
 export async function listAdminMedia(locals: App.Locals) {
-  const base = await listRecentMedia(locals);
   const db = getDb(locals);
-  const hidden = await db.prepare(`
+  const result = await db.prepare(`
     SELECT
       m.id,
       m.type,
@@ -61,15 +60,28 @@ export async function listAdminMedia(locals: App.Locals) {
       m.created_at,
       m.status,
       u.display_name,
-      0 AS comment_count
+      COUNT(c.id) AS comment_count
     FROM media_items m
     JOIN users u ON u.id = m.uploader_user_id
-    WHERE m.status = 'hidden'
-    ORDER BY m.created_at DESC
-    LIMIT 24
+    LEFT JOIN comments c ON c.media_item_id = m.id AND c.status = 'visible'
+    GROUP BY
+      m.id,
+      m.type,
+      m.caption,
+      m.trip_day,
+      m.storage_key_original,
+      m.storage_key_thumbnail,
+      m.storage_key_preview,
+      m.created_at,
+      m.status,
+      u.display_name
+    ORDER BY
+      CASE WHEN m.status = 'hidden' THEN 0 ELSE 1 END,
+      m.created_at DESC
+    LIMIT 100
   `).all();
 
-  return [...base, ...(hidden.results ?? [])];
+  return result.results ?? [];
 }
 
 export async function hideMediaItem(locals: App.Locals, input: { mediaId: string; actorUserId: string }) {

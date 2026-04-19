@@ -11,7 +11,7 @@ const isOwner = user?.role === 'owner';
   <section class="panel">
     <p class="eyebrow">Phase 2 admin</p>
     <h1>Invites and moderation</h1>
-    <p class="small-note">Local-first owner tools for invite creation and hide actions.</p>
+    <p class="small-note">Owner tools for invite creation, hide or unhide moderation, delete actions, and cleanup.</p>
   </section>
 
   {!user ? (
@@ -68,11 +68,13 @@ const isOwner = user?.role === 'owner';
 
       <section class="panel">
         <p class="eyebrow">Media moderation</p>
+        <p class="small-note">Hidden items should appear first and can be unhidden here.</p>
         <div data-admin-media></div>
       </section>
 
       <section class="panel">
         <p class="eyebrow">Comment moderation</p>
+        <p class="small-note">Hidden comments can be unhidden here. Deleted comments are permanent.</p>
         <div data-admin-comments></div>
       </section>
     </>

@@ -267,6 +267,31 @@ section,
   padding: 1rem 1.1rem;
 }
 
+.admin-media-row {
+  align-items: center;
+}
+
+.admin-media-preview {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 96px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.04);
+}
+
+.admin-media-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-media-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .panel {
   position: relative;
   overflow: hidden;
