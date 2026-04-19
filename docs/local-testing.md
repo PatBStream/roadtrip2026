@@ -95,7 +95,8 @@ See also:
 
 ## Current MVP limitations
 
-- image uploads now generate preview and thumbnail derivatives during completion
+- uploaded media is currently served as original objects only
+- image thumbnail and preview derivative generation is intentionally deferred
 - video preview polish is still limited
 - invite management is operational, not polished UI
 - auth is invite-only but intentionally simple

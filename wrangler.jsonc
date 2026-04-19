@@ -20,9 +20,6 @@
 			"bucket_name": "roadtrip2026-media"
 		}
 	],
-	"vars": {
-		"SESSION_SECRET": "REPLACE_WITH_SESSION_SECRET_VIA_SECRET_IN_PRODUCTION"
-	},
 	"observability": {
 		"enabled": true
 	}

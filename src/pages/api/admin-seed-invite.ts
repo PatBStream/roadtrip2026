@@ -4,7 +4,12 @@ import { createInvitedUser, findUserByEmail } from '../../lib/server/users';
 import { badRequest, json } from '../../lib/server/http';
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  const emergencyEnabled = request.headers.get('x-enable-emergency-seed');
   const adminKey = request.headers.get('x-admin-seed-key');
+
+  if (emergencyEnabled !== 'true') {
+    return json({ error: 'Emergency seed endpoint is disabled in normal use. Use the owner admin UI instead.' }, { status: 403 });
+  }
 
   if (!adminKey || adminKey !== locals.env.SESSION_SECRET) {
     return json({ error: 'Forbidden' }, { status: 403 });

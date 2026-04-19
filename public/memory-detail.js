@@ -29,9 +29,10 @@ async function bootstrapMemoryDetail() {
   if (!memoryId) return;
 
   const body = root.querySelector('[data-memory-body]');
-  const commentsList = root.querySelector('[data-memory-comments]');
-  const commentForm = root.querySelector('[data-memory-comment-form]');
-  const commentStatus = root.querySelector('[data-memory-comment-status]');
+  const commentsList = document.querySelector('[data-memory-comments]');
+  const commentForm = document.querySelector('[data-memory-comment-form]');
+  const commentStatus = document.querySelector('[data-memory-comment-status]');
+  const ownerActions = document.querySelector('[data-owner-memory-actions]');
 
   const mediaResult = await getJson(`/api/media-detail?mediaId=${encodeURIComponent(memoryId)}`);
   if (mediaResult.ok && mediaResult.data?.item && body) {
@@ -44,6 +45,35 @@ async function bootstrapMemoryDetail() {
         ${item.previewUrl || item.originalUrl ? `<img class="detail-image" src="${item.previewUrl || item.originalUrl}" alt="${item.caption || 'Trip memory'}" />` : '<div class="memory-placeholder">No preview yet</div>'}
       </div>
     `;
+
+    if (ownerActions) {
+      ownerActions.innerHTML = `<div class="inline-actions"><button class="button ghost" type="button" data-memory-action="hide">Hide this memory</button><button class="button ghost" type="button" data-delete-memory>Delete this memory</button></div><p class="small-note">Owner-only moderation actions. Delete is permanent and removes storage objects immediately.</p>`;
+      const actionButton = ownerActions.querySelector('[data-memory-action]');
+      actionButton?.addEventListener('click', async () => {
+        actionButton.setAttribute('disabled', 'disabled');
+        const action = actionButton.getAttribute('data-memory-action');
+        const result = await postJson('/api/admin-media-status', { mediaId: memoryId, action });
+        if (!result.ok) {
+          actionButton.textContent = result.data?.error || 'Hide failed';
+          actionButton.removeAttribute('disabled');
+          return;
+        }
+        window.location.href = '/memories/admin/';
+      });
+
+      const deleteButton = ownerActions.querySelector('[data-delete-memory]');
+      deleteButton?.addEventListener('click', async () => {
+        if (!window.confirm('Delete this memory permanently from storage and database? This cannot be undone.')) return;
+        deleteButton.setAttribute('disabled', 'disabled');
+        const result = await postJson('/api/admin-media-delete', { mediaId: memoryId });
+        if (!result.ok) {
+          deleteButton.textContent = result.data?.error || 'Delete failed';
+          deleteButton.removeAttribute('disabled');
+          return;
+        }
+        window.location.href = '/memories/admin/';
+      });
+    }
   }
 
   async function loadComments() {
@@ -61,8 +91,40 @@ async function bootstrapMemoryDetail() {
         <strong>${item.display_name}</strong>
         <p>${item.body}</p>
         <p class="small-note">${item.created_at}</p>
+        ${document.body.hasAttribute('data-owner-view') ? `<div class="inline-actions">${item.status === 'hidden' || item.status === 'deleted' ? `<button class="button ghost" type="button" data-comment-detail-action="unhide" data-comment-detail-id="${item.id}">Unhide comment</button>` : `<button class="button ghost" type="button" data-comment-detail-action="hide" data-comment-detail-id="${item.id}">Hide comment</button>`}<button class="button ghost" type="button" data-comment-detail-delete="${item.id}">Delete comment</button></div>` : ''}
       </article>
     `).join('');
+
+    for (const button of commentsList.querySelectorAll('[data-comment-detail-action]')) {
+      button.addEventListener('click', async () => {
+        button.setAttribute('disabled', 'disabled');
+        const commentId = button.getAttribute('data-comment-detail-id');
+        const action = button.getAttribute('data-comment-detail-action');
+        const result = await postJson('/api/admin-comment-status', { commentId, action });
+        if (!result.ok) {
+          button.textContent = result.data?.error || 'Action failed';
+          button.removeAttribute('disabled');
+          return;
+        }
+        await loadComments();
+      });
+    }
+
+    for (const button of commentsList.querySelectorAll('[data-comment-detail-delete]')) {
+      button.addEventListener('click', async () => {
+        const commentId = button.getAttribute('data-comment-detail-delete');
+        if (!commentId) return;
+        if (!window.confirm('Delete this comment permanently? This cannot be undone.')) return;
+        button.setAttribute('disabled', 'disabled');
+        const result = await postJson('/api/admin-comment-delete', { commentId });
+        if (!result.ok) {
+          button.textContent = result.data?.error || 'Delete failed';
+          button.removeAttribute('disabled');
+          return;
+        }
+        await loadComments();
+      });
+    }
   }
 
   await loadComments();

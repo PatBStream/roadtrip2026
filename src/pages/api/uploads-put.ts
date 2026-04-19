@@ -4,9 +4,16 @@ import { requireUser } from '../../lib/server/auth';
 import { getDb } from '../../lib/server/db';
 import { getMediaBucket } from '../../lib/server/storage';
 import { badRequest, json } from '../../lib/server/http';
+import { enforceRateLimit } from '../../lib/server/rate-limit';
+import { uploadConstraints } from '../../lib/shared/memories';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   requireUser({ locals });
+  await enforceRateLimit(locals, request, {
+    scope: 'uploads-put',
+    limit: uploadConstraints.rateLimit.uploadPutPerMinute,
+    windowSeconds: 60,
+  });
 
   const url = new URL(request.url);
   const uploadSessionId = url.searchParams.get('uploadSessionId');

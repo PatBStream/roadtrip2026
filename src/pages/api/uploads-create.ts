@@ -4,9 +4,15 @@ import { requireUser } from '../../lib/server/auth';
 import { uploadConstraints, type MediaType } from '../../lib/shared/memories';
 import { createUploadSession } from '../../lib/server/uploads';
 import { badRequest, json } from '../../lib/server/http';
+import { enforceRateLimit } from '../../lib/server/rate-limit';
 
 export const POST: APIRoute = async ({ request, locals }) => {
   requireUser({ locals });
+  await enforceRateLimit(locals, request, {
+    scope: 'uploads-create',
+    limit: uploadConstraints.rateLimit.uploadCreatePerMinute,
+    windowSeconds: 60,
+  });
 
   const body = await request.json().catch(() => null) as {
     type?: MediaType;

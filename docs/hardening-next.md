@@ -4,10 +4,19 @@ These are the next recommended improvements after the current MVP.
 
 ## Security and admin
 
-- replace the temporary admin seed endpoint with an owner-only invite UI or CLI flow
-- add better admin separation than reusing `SESSION_SECRET` as the seeding key
-- add request rate limiting for sign-in, upload creation, upload PUT, and comments
-- add basic moderation controls for hide/delete in the UI
+Completed in current branch:
+
+- owner-only invite UI
+- disable/re-enable invited users
+- request rate limiting for sign-in, upload creation, upload PUT, and comments
+- moderation controls for hide/unhide/delete in the UI
+- permanent media deletion from storage and database
+
+Still recommended next:
+
+- remove the emergency seed endpoint entirely, or move it to a CLI-only/admin-only maintenance path
+- add stronger admin separation than reusing `SESSION_SECRET` as the emergency seeding key
+- add audit visibility in the UI for destructive actions
 
 ## Media handling
 
@@ -24,5 +33,5 @@ These are the next recommended improvements after the current MVP.
 ## Data lifecycle
 
 - add cleanup for abandoned upload sessions
-- consider storage cleanup for deleted media
 - add audit visibility for destructive actions
+- consider soft-delete retention policy only if permanent delete proves too aggressive in real use

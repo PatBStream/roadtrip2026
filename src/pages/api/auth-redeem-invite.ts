@@ -3,8 +3,16 @@ import type { APIRoute } from 'astro';
 import { redeemInvite } from '../../lib/server/users';
 import { buildSessionCookie, createSession } from '../../lib/server/session';
 import { badRequest, json } from '../../lib/server/http';
+import { enforceRateLimit } from '../../lib/server/rate-limit';
+import { uploadConstraints } from '../../lib/shared/memories';
 
 export const POST: APIRoute = async ({ request, locals }) => {
+  await enforceRateLimit(locals, request, {
+    scope: 'auth-redeem-invite',
+    limit: uploadConstraints.rateLimit.signInPerMinute,
+    windowSeconds: 60,
+  });
+
   const body = await request.json().catch(() => null) as { email?: string; displayName?: string } | null;
 
   if (!body?.email) {

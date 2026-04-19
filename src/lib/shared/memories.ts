@@ -13,6 +13,12 @@ export const uploadConstraints = {
   comment: {
     maxLength: 1000,
   },
+  rateLimit: {
+    signInPerMinute: 8,
+    uploadCreatePerMinute: 20,
+    uploadPutPerMinute: 20,
+    commentPostPerMinute: 20,
+  },
 } as const;
 
 export type MediaType = 'image' | 'video';

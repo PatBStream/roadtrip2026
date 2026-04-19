@@ -21,7 +21,7 @@ Before deploying this branch, confirm all of the following:
 - `wrangler.jsonc` contains the correct D1 database id
 - Cloudflare secret `SESSION_SECRET` exists
 - remote D1 schema has been applied
-- at least one invited user exists or can be seeded immediately after deploy
+- at least one owner user exists or can be created immediately after deploy
 - local `npm run build` passes
 
 ## Deploy command
@@ -35,22 +35,21 @@ npm run deploy
 
 1. open the deployed `/memories/` page
 2. confirm sign-in-required view appears
-3. seed an invited user against the deployed URL
+3. create or verify an owner user for admin access
 4. sign in from phone
-5. upload one photo
-6. upload one short video
-7. confirm gallery and detail page work
-8. post a comment
-9. sign out
+5. create an invited user through `/memories/admin/`
+6. upload one photo
+7. upload one short video
+8. confirm gallery and detail page work
+9. post a comment
+10. validate one hide/unhide or delete action carefully
+11. sign out
 
-## Seed invited user after deploy
+## Emergency-only invite seeding after deploy
 
-Example:
+Normal flow should use the owner admin UI.
 
-```bash
-cd /home/pat/projects/roadtrip2026
-SESSION_SECRET='your-cloudflare-secret-value' ./scripts/seed-invite.sh your-email@example.com "Pat" https://your-deployed-url.example
-```
+Only if admin access is blocked and you need recovery, use the emergency seed path.
 
 ## MVP deployment warning
 

@@ -30,6 +30,7 @@ const items = user ? await listRecentMedia(Astro.locals).catch(() => []) : [];
         <p class="small-note">Signed in as {user.displayName}.</p>
         <div class="inline-actions">
           <a class="button" href="/memories/upload/">Open upload flow</a>
+          {user.role === 'owner' ? <a class="button ghost" href="/memories/admin/">Admin</a> : null}
           <button class="button ghost" type="button" data-memory-logout>Sign out</button>
         </div>
       </section>

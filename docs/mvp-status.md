@@ -20,11 +20,10 @@ The following are now implemented enough to test as an MVP:
 
 - image thumbnail and preview derivative generation
 - better video preview handling
-- polished invite management UI
-- moderation UI
 - pagination/filter UX
-- production-grade abuse/rate-limit hardening
+- stronger production-grade abuse/rate-limit hardening
 - richer mobile progress states
+- admin polish and audit visibility improvements
 
 ## MVP test checklist
 
@@ -39,8 +38,8 @@ The following are now implemented enough to test as an MVP:
 
 ## Deployment readiness note
 
-This is close to MVP deployable for low-risk private testing, but it should still be treated as a limited private beta until:
+This is now deployable for low-risk private testing and Phase 2 admin/moderation validation, but it should still be treated as a limited private beta until:
 
 - derivatives are added in a Cloudflare-compatible way
-- invite/admin flow is hardened
+- one more local-to-Cloudflare verification pass is completed on the new admin/moderation flows
 - a little more phone-based testing is completed

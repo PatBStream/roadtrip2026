@@ -6,7 +6,7 @@ const user = pageUserOrNull(Astro.locals);
 const memoryId = Astro.url.searchParams.get('id');
 ---
 
-<BaseLayout title="Memory Detail · Road Trip 2026" description="Trip memory detail view." currentPath="/memories/">
+<BaseLayout title="Memory Detail · Road Trip 2026" description="Trip memory detail view." currentPath="/memories/" bodyAttrs={user?.role === 'owner' ? { 'data-owner-view': 'true' } : {}}>
   <section class="panel">
     <p class="eyebrow">Memory detail</p>
     <h1>{memoryId ? `Memory ${memoryId}` : 'Memory detail'}</h1>
@@ -27,6 +27,7 @@ const memoryId = Astro.url.searchParams.get('id');
         <p class="small-note">Signed in as {user.displayName}.</p>
         <div class="inline-actions">
           <a class="button ghost" href="/memories/">Back to memories</a>
+          {user.role === 'owner' ? <a class="button ghost" href="/memories/admin/">Admin</a> : null}
           <button class="button ghost" type="button" data-memory-logout>Sign out</button>
         </div>
       </section>
@@ -34,6 +35,13 @@ const memoryId = Astro.url.searchParams.get('id');
       <section data-memory-detail data-memory-id={memoryId}>
         <div data-memory-body></div>
       </section>
+
+      {user.role === 'owner' ? (
+        <section class="panel">
+          <p class="eyebrow">Owner tools</p>
+          <div data-owner-memory-actions></div>
+        </section>
+      ) : null}
 
       <section class="panel">
         <p class="eyebrow">Comments</p>

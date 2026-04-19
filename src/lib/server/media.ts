@@ -12,6 +12,7 @@ export async function getMediaById(locals: App.Locals, mediaId: string) {
       m.storage_key_preview,
       m.storage_key_thumbnail,
       m.created_at,
+      m.status,
       u.display_name
     FROM media_items m
     JOIN users u ON u.id = m.uploader_user_id

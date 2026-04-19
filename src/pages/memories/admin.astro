@@ -1,0 +1,83 @@
+export const prerender = false;
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { pageUserOrNull } from '../../lib/server/guards';
+
+const user = pageUserOrNull(Astro.locals);
+const isOwner = user?.role === 'owner';
+---
+
+<BaseLayout title="Memories Admin · Road Trip 2026" description="Owner tools for invites and moderation." currentPath="/memories/">
+  <section class="panel">
+    <p class="eyebrow">Phase 2 admin</p>
+    <h1>Invites and moderation</h1>
+    <p class="small-note">Local-first owner tools for invite creation and hide actions.</p>
+  </section>
+
+  {!user ? (
+    <section class="panel callout">
+      <strong class="kicker">Sign in required</strong>
+      <p>You need to sign in before opening admin tools.</p>
+      <div class="inline-actions">
+        <a class="button" href="/memories/sign-in/">Sign in</a>
+      </div>
+    </section>
+  ) : !isOwner ? (
+    <section class="panel callout">
+      <strong class="kicker">Owner access only</strong>
+      <p>These tools are intentionally limited to owner accounts.</p>
+    </section>
+  ) : (
+    <>
+      <section class="panel">
+        <p class="small-note">Signed in as {user.displayName} ({user.role}).</p>
+        <div class="inline-actions">
+          <a class="button ghost" href="/memories/">Back to memories</a>
+          <button class="button ghost" type="button" data-memory-logout>Sign out</button>
+        </div>
+      </section>
+
+      <section class="panel upload-panel">
+        <p class="eyebrow">Create invite</p>
+        <form class="memory-upload-form" data-admin-invite-form>
+          <label>
+            <span>Email</span>
+            <input type="email" name="email" required />
+          </label>
+          <label>
+            <span>Display name</span>
+            <input type="text" name="displayName" required />
+          </label>
+          <label>
+            <span>Role</span>
+            <select name="role">
+              <option value="member">Member</option>
+              <option value="moderator">Moderator</option>
+              <option value="owner">Owner</option>
+            </select>
+          </label>
+          <button class="button" type="submit">Create invite</button>
+          <p class="small-note" data-admin-invite-status></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Invited and active users</p>
+        <div data-admin-users></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Media moderation</p>
+        <div data-admin-media></div>
+      </section>
+
+      <section class="panel">
+        <p class="eyebrow">Comment moderation</p>
+        <div data-admin-comments></div>
+      </section>
+    </>
+  )}
+
+  <script src="/memories-admin.js" defer></script>
+  <script src="/memories-nav.js" defer></script>
+</BaseLayout>

@@ -5,6 +5,7 @@ const {
   title = 'Road Trip 2026',
   description = 'Route 66-inspired road trip guide from Palm Springs to Chicago.',
   currentPath = '/',
+  bodyAttrs = {},
 } = Astro.props;
 
 export const canonicalLabels = {
@@ -34,7 +35,7 @@ const navItems = [
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,500..800,100&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>{title}</title>
   </head>
-  <body>
+  <body {...bodyAttrs}>
     <div class="site-shell">
       <header class="site-header">
         <a class="brand" href="/">

@@ -1,37 +1,45 @@
-# Invite Seeding
+# Invite Seeding Notes
 
-Until a proper invite-management UI exists, invited users can be seeded with the admin endpoint.
+## Current recommendation
 
-## Endpoint
+Normal invite creation should now happen through the owner-only admin UI:
+
+- `/memories/admin/`
+
+That is the preferred path for local and deployed testing.
+
+## Emergency-only seed endpoint
+
+The old seed endpoint still exists only as an emergency fallback:
 
 - `POST /api/admin-seed-invite`
 
-Headers:
+It is intentionally disabled unless the caller sends both:
 
-- `content-type: application/json`
+- `x-enable-emergency-seed: true`
 - `x-admin-seed-key: <SESSION_SECRET>`
 
-Body:
+This is no longer the normal workflow.
 
-```json
-{
-  "email": "guest@example.com",
-  "displayName": "Guest Name"
-}
-```
+## Helper script
 
-## Local helper script
-
-A helper script is included:
+The helper script still works for emergency seeding when explicitly enabled:
 
 ```bash
 SESSION_SECRET=your-secret ./scripts/seed-invite.sh guest@example.com "Guest Name" http://localhost:53000
 ```
 
-For local Wrangler preview, make sure `your-secret` matches the value in `.dev.vars`.
+If you use the script now, add the extra header logic first or temporarily call the endpoint manually.
 
-For a deployed environment, replace the base URL with the live site URL.
+## Why this changed
 
-## Important note
+Phase 2 added:
 
-This endpoint is intentionally temporary and operational. It should eventually be replaced by a proper owner-only invite management flow.
+- owner-only invite UI
+- moderation controls
+- disable/re-enable user controls
+- hide/unhide media and comments
+- permanent delete for media and comments
+- basic rate limiting
+
+So the secret-based seeding route should no longer be the routine path.
