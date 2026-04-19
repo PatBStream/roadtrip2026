@@ -49,8 +49,13 @@ const user = pageUserOrNull(Astro.locals);
 
         <form class="memory-upload-form" data-memory-upload-form>
           <label>
-            <span>Choose photo(s) or one video</span>
-            <input type="file" accept="image/*,video/mp4,video/quicktime" multiple />
+            <span>Choose up to {uploadConstraints.batch.maxImageCount} photos</span>
+            <input type="file" accept="image/*" multiple data-image-input />
+          </label>
+
+          <label>
+            <span>Or choose one video</span>
+            <input type="file" accept="video/mp4,video/quicktime" data-video-input />
           </label>
 
           <label>
@@ -71,7 +76,8 @@ const user = pageUserOrNull(Astro.locals);
           </label>
 
           <button class="button" type="submit">Upload memory</button>
-          <p class="small-note" data-upload-status>Signed in as {user.displayName}. You can upload up to {uploadConstraints.batch.maxImageCount} images at once, or one video.</p>
+          <p class="small-note" data-upload-status>Signed in as {user.displayName}. On Android, use the photo picker above for multi-select. Video upload stays one-at-a-time.</p>
+          <div class="upload-progress-list" data-upload-progress-list></div>
         </form>
       </section>
     </>

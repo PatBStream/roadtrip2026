@@ -35,10 +35,30 @@ function classifyFile(file) {
   return file.type.startsWith('image/') ? 'image' : 'video';
 }
 
-async function uploadOneFile(file, shared) {
+function renderProgress(progressRoot, items) {
+  if (!progressRoot) return;
+  if (!items.length) {
+    progressRoot.innerHTML = '';
+    return;
+  }
+
+  progressRoot.innerHTML = items.map((item) => `
+    <div class="upload-progress-item ${item.state}">
+      <strong>${item.name}</strong>
+      <span>${item.message}</span>
+    </div>
+  `).join('');
+}
+
+function updateProgress(items, index, patch, progressRoot) {
+  items[index] = { ...items[index], ...patch };
+  renderProgress(progressRoot, items);
+}
+
+async function uploadOneFile(file, shared, progressItems, index) {
   const type = classifyFile(file);
 
-  shared.setStatus(`Creating upload session for ${file.name}...`);
+  updateProgress(progressItems, index, { state: 'working', message: 'Creating upload session...' }, shared.progressRoot);
   const createResult = await postJson('/api/uploads-create', {
     type,
     fileName: file.name,
@@ -50,14 +70,14 @@ async function uploadOneFile(file, shared) {
     throw new Error(createResult.data?.error ?? `Could not create upload session for ${file.name}.`);
   }
 
-  shared.setStatus(`Uploading ${file.name} to storage...`);
+  updateProgress(progressItems, index, { state: 'working', message: 'Uploading to storage...' }, shared.progressRoot);
   const putResult = await uploadBinary(`/api/uploads-put?uploadSessionId=${encodeURIComponent(createResult.data.uploadSessionId)}`, file);
 
   if (!putResult.ok) {
     throw new Error(putResult.data?.error ?? `Could not upload ${file.name} to storage.`);
   }
 
-  shared.setStatus(`Finalizing ${file.name}...`);
+  updateProgress(progressItems, index, { state: 'working', message: 'Finalizing...' }, shared.progressRoot);
   const completeResult = await postJson('/api/uploads-complete', {
     uploadSessionId: createResult.data.uploadSessionId,
     fileName: file.name,
@@ -72,6 +92,8 @@ async function uploadOneFile(file, shared) {
     throw new Error(completeResult.data?.error ?? `Could not complete upload for ${file.name}.`);
   }
 
+  updateProgress(progressItems, index, { state: 'done', message: 'Uploaded successfully.' }, shared.progressRoot);
+
   return {
     mediaId: completeResult.data.mediaId,
     fileName: file.name,
@@ -83,28 +105,49 @@ async function bootstrapUploadForm() {
   if (!form) return;
 
   const status = form.querySelector('[data-upload-status]');
-  const fileInput = form.querySelector('input[type="file"]');
+  const imageInput = form.querySelector('[data-image-input]');
+  const videoInput = form.querySelector('[data-video-input]');
   const captionInput = form.querySelector('textarea');
   const tripDayInput = form.querySelector('select');
   const submitButton = form.querySelector('button[type="submit"]');
+  const progressRoot = form.querySelector('[data-upload-progress-list]');
 
   const setStatus = (message) => {
     if (status) status.textContent = message;
   };
 
+  function getSelectedFiles() {
+    const imageFiles = Array.from(imageInput?.files ?? []);
+    const videoFiles = Array.from(videoInput?.files ?? []);
+    return { imageFiles, videoFiles, files: [...imageFiles, ...videoFiles] };
+  }
+
+  imageInput?.addEventListener('change', () => {
+    if ((imageInput.files?.length ?? 0) > 0 && videoInput) {
+      videoInput.value = '';
+    }
+    const count = imageInput.files?.length ?? 0;
+    setStatus(count > 0 ? `${count} image${count === 1 ? '' : 's'} selected.` : '');
+  });
+
+  videoInput?.addEventListener('change', () => {
+    if ((videoInput.files?.length ?? 0) > 0 && imageInput) {
+      imageInput.value = '';
+    }
+    const count = videoInput.files?.length ?? 0;
+    setStatus(count > 0 ? `${count} video selected.` : '');
+  });
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (submitButton) submitButton.disabled = true;
 
-    const files = Array.from(fileInput?.files ?? []);
+    const { imageFiles, videoFiles, files } = getSelectedFiles();
     if (!files.length) {
       setStatus('Choose at least one file first.');
       if (submitButton) submitButton.disabled = false;
       return;
     }
-
-    const imageFiles = files.filter((file) => classifyFile(file) === 'image');
-    const videoFiles = files.filter((file) => classifyFile(file) === 'video');
 
     if (videoFiles.length > 1) {
       setStatus('Choose only one video at a time.');
@@ -113,7 +156,7 @@ async function bootstrapUploadForm() {
     }
 
     if (videoFiles.length === 1 && imageFiles.length > 0) {
-      setStatus('Upload images and videos separately. You can upload up to 10 images at once, or one video.');
+      setStatus('Upload images and videos separately.');
       if (submitButton) submitButton.disabled = false;
       return;
     }
@@ -127,15 +170,22 @@ async function bootstrapUploadForm() {
     const shared = {
       caption: captionInput?.value ?? '',
       tripDay: tripDayInput?.value ? Number(tripDayInput.value) : null,
-      setStatus,
+      progressRoot,
     };
+
+    const progressItems = files.map((file) => ({
+      name: file.name,
+      state: 'pending',
+      message: 'Waiting to upload...',
+    }));
+    renderProgress(progressRoot, progressItems);
 
     try {
       const results = [];
       for (let index = 0; index < files.length; index += 1) {
         const file = files[index];
         setStatus(`Uploading ${index + 1} of ${files.length}: ${file.name}`);
-        results.push(await uploadOneFile(file, shared));
+        results.push(await uploadOneFile(file, shared, progressItems, index));
       }
 
       if (results.length === 1) {
@@ -145,8 +195,13 @@ async function bootstrapUploadForm() {
       }
 
       form.reset();
+      renderProgress(progressRoot, []);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Upload failed.');
+      const failedIndex = progressItems.findIndex((item) => item.state === 'working');
+      if (failedIndex >= 0) {
+        updateProgress(progressItems, failedIndex, { state: 'failed', message: error instanceof Error ? error.message : 'Upload failed.' }, progressRoot);
+      }
     } finally {
       if (submitButton) submitButton.disabled = false;
     }

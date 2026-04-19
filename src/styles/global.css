@@ -292,6 +292,39 @@ section,
   min-width: 0;
 }
 
+.upload-progress-list {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.upload-progress-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+}
+
+.upload-progress-item.pending span {
+  color: var(--muted);
+}
+
+.upload-progress-item.working span {
+  color: var(--accent);
+}
+
+.upload-progress-item.done span {
+  color: var(--accent-4);
+}
+
+.upload-progress-item.failed span {
+  color: #ffb4a8;
+}
+
 .panel {
   position: relative;
   overflow: hidden;
