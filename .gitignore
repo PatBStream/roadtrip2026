@@ -31,3 +31,6 @@ coverage/
 .wrangler
 .dev.vars*
 !.dev.vars.example
+
+# Local-only operational notes
+docs/cloudflare-emergency-local.md
